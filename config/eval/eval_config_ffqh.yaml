@@ -1,0 +1,56 @@
+data:
+  class_path: "vv.data.FFHQLoader"
+  init_args:
+    resolution: 256
+    test_split: 0.0  # Test size is 0
+    train_val_split: 0.0  # Train size is 0
+    batch_size: 30
+    workers: 16
+    verbose: false
+    data_dir: "/path/to/ffhq"
+
+metrics_logger:
+  class_path: "vv.logger.MetricsLogger"
+  init_args:
+    log_every_n_val_epoch: 1
+    fid_config:
+      active: True
+      feature_layer_size: 2048
+    kid_config:
+      active: True
+      feature_layer_size: 2048
+    is_config:
+      active: True
+      feature_layer_size: 2048
+      splits: 10
+    lpips_config:
+      active: True
+      net_type: "alex"
+      reduction: "mean"
+    psnr_config:
+      active: True
+      data_range: [0.0, 1.0]
+      base: 10
+      reduction: "elementwise_mean"
+      dim: null
+    cmmd_config:
+      active: True
+
+overwrite_model_configs:
+  class_path: "vv.models.latent_diffusion_copy.VQModel"
+  init_args:
+    analyze_codebook_usage: True
+
+codebook_analyzer:
+  class_path: "vv.logger.CodebookAnalyzer"
+  init_args:
+    tag_name: "codebook_utilization"
+
+trainer:
+  accelerator: auto
+  strategy: "ddp_find_unused_parameters_true"
+  devices: auto
+  num_nodes: 1
+  precision: "16-mixed"
+  inference_mode: True
+  enable_progress_bar: True

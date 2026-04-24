@@ -1,0 +1,51 @@
+run_speed_test: True
+speed_test_only: True
+speed_test_sample_size: 1000
+
+data:
+  class_path: "vv.data.ImageNetLoader"
+  init_args:
+    resolution: 256
+    train_instances: 1281167
+    val_instances: 50000
+    test_instances: 100000
+    batch_size: 1
+    workers: 16
+    verbose: False
+    data_dir: "/path/to/imageNet"
+
+metrics_logger:
+  class_path: "vv.logger.MetricsLogger"
+  init_args:
+    log_every_n_val_epoch: 1
+    fid_config:
+      active: True
+      feature_layer_size: 2048
+    kid_config:
+      active: True
+      feature_layer_size: 2048
+    is_config:
+      active: True
+      feature_layer_size: 2048
+      splits: 10
+    lpips_config:
+      active: True
+      net_type: "alex"
+      reduction: "mean"
+    psnr_config:
+      active: True
+      data_range: [0.0, 1.0]
+      base: 10
+      reduction: "elementwise_mean"
+      dim: null
+    cmmd_config:
+      active: True
+
+trainer:
+  accelerator: auto
+  strategy: "ddp_find_unused_parameters_true"
+  devices: auto
+  num_nodes: 1
+  precision: "16-mixed"
+  inference_mode: True
+  enable_progress_bar: True

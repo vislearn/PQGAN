@@ -1,0 +1,267 @@
+CIFAR10, 128 batch size
+
+--------------------------------------------------------------------
+
+Old implementation, Baseline tests for embedding shape and number of codebooks
+
+Residual_Blocks_256_CIFAR10:
+    RTX 4060 Ti
+    248834 steps (795 epoches), 1,934 h (6962 +- 1 s) --> 8.75723 s / epoch
+    Test metric:
+        loss:                   0.001047
+        encoder loss:           0.0
+        reconstruction_loss:    0.001047
+
+Residual_Blocks_256_CIFAR10_VQ_512_IPE
+    RTX 4060 Ti
+    280134 steps (895 epochs), 2,589 h (9320 +- 1 s) --> 10.41341 s / epoch
+    Test metric:
+        loss:                   0.001162
+        encoder loss:           0.0000284
+        reconstruction_loss:    0.001134
+
+Residual_Blocks_256_CIFAR10_VQ_512
+    1016 MiB
+    RTX 4060 Ti
+    219099 steps (700 epochs), 2,141 h (7708 +- 1 s) --> 11.01000 s / epoch
+    Test metric:
+        loss:                   0.001091
+        encoder loss:           0.0000120
+        reconstruction_loss:    0.001079
+
+Residual_Blocks_256_CIFAR10_VQ_512_Single_Codebook
+    RTX 4060 Ti
+    251964 steps (805 epochs), 2,325 h (8370 +- 1 s) --> 10.39752 s / epoch
+    Test metric:
+        loss:                   0.001113
+        encoder loss:           0.0000188
+        reconstruction_loss:    0.001094
+
+-----------------------------------------------------------------------
+
+Different sizes for embedding space.  Old implementation
+
+Residual_Blocks_256_CIFAR10_VQ_16
+    664 MiB
+    RTX 4060 Ti
+    317694 steps (1015 epochs), 2,522 h (9079 +- 1 s) --> 8.94482 s / epoch
+    Test metric:
+        loss:                   0.003598
+        encoder loss:           0.002006
+        reconstruction_loss:    0.001592
+
+Residual_Blocks_256_CIFAR10_VQ_32
+    664 MiB
+    RTX 4060 Ti
+    259789 steps (830 epochs), 2,045 h (7362 +- 1 s) --> 8.86988 s / epoch
+    Test metric:
+        loss:                   0.002076
+        encoder loss:           0.000774
+        reconstruction_loss:    0.001301
+
+Residual_Blocks_256_CIFAR10_VQ_64
+    664 MiB
+    RTX 4060 Ti
+    261354 steps (835 epochs), 2,075 h (7470 +- 1 s) --> 8.94611 s / epoch
+    Test metric:
+        loss:                   0.001414
+        encoder loss:           0.000252
+        reconstruction_loss:    0.001162
+
+Residual_Blocks_256_CIFAR10_VQ_128
+    636 MiB
+    RTX 4060 Ti
+    230054 steps (735 epochs), 1,83 h (6588 +- 1 s) --> 8.96327 s / epoch
+    Test metric:
+        loss:                   0.001178
+        encoder loss:           0.0000722
+        reconstruction_loss:    0.001106
+
+Residual_Blocks_256_CIFAR10_VQ_256
+    862 MiB
+    RTX 4060 Ti
+    292654 steps (935 epochs), 2,403 h (8651 +- 1 s) --> 9.25241 s / epoch
+    Test metric:
+        loss:                   0.001094
+        encoder loss:           0.0000194
+        reconstruction_loss:    0.001074
+
+Residual_Blocks_256_CIFAR10_VQ_512
+    look above
+    1016 MiB
+    RTX 4060 Ti
+    219099 steps (700 epochs), 2,141 h (7708 +- 1 s) --> 11.01000 s / epoch
+    Test metric:
+        loss:                   0.001091
+        encoder loss:           0.0000120
+        reconstruction_loss:    0.001079
+
+Residual_Blocks_256_CIFAR10_VQ_1024
+    2224 MiB
+    RTX 4060 Ti
+    239444 steps (765 epochs), 2,694 h (9698 +- 1 s) --> 12.67765 s / epoch
+    Test metric:
+        loss:                   0.001099
+        encoder loss:           0.0000109
+        reconstruction_loss:    0.001088
+
+Residual_Blocks_256_CIFAR10_VQ_2048
+    4038 MiB
+    RTX 4060 Ti
+    241009 steps (770 epochs), 3,732 h (13435 +- 1 s) --> 17.44811 s / epoch
+    Test metric:
+        loss:                   0.001106
+        encoder loss:           0.0000134
+        reconstruction_loss:    0.001093
+
+Residual_Blocks_256_CIFAR10_VQ_4096
+    7668 MiB
+    RTX 4060 Ti
+    270744 steps (865 epochs), 6,6 h (23760 +- 1 s) --> 27.46821 s / epoch
+    Test metric:
+        loss:                   0.001099
+        encoder loss:           0.0000100
+        reconstruction_loss:    0.001089
+
+Weird behavior for 8061 vs 8062 embedding size
+
+----------------------------------------------------------------------------------------------------
+
+Different numbers of heads. Old implementation
+
+Residual_Blocks_256_CIFAR10_VQ_2_256
+    Test metric:
+        loss:                   0.001096
+        encoder loss:           0.0000165
+        reconstruction_loss:    0.001080
+
+Residual_Blocks_256_CIFAR10_VQ_4_128
+    Test metric:
+        loss:                   0.001165
+        encoder loss:           0.0000404
+        reconstruction_loss:    0.001124
+
+Residual_Blocks_256_CIFAR10_VQ_8_64
+    Test metric:
+        loss:                   0.001242
+        encoder loss:           0.0000671
+        reconstruction_loss:    0.001175
+
+Residual_Blocks_256_CIFAR10_VQ_16_32
+    Test metric:
+        loss:                   0.001312
+        encoder loss:           0.000124
+        reconstruction_loss:    0.001188
+
+----------------------------------------------------------------------------------------
+
+Increaseing head count and total codebook size. Old impelmentation
+
+Residual_Blocks_256_CIFAR10_VQ_2_512
+    Test metric:
+        loss:                   0.001087
+        encoder loss:           0.0000125
+        reconstruction_loss:    0.001074
+
+Residual_Blocks_256_CIFAR10_VQ_4_512
+    Test metric:
+        loss:                   0.001114
+        encoder loss:           0.0000595
+        reconstruction_loss:    0.001108
+
+Residual_Blocks_256_CIFAR10_VQ_8_512
+    Test metric:
+        loss:                   0.001147
+        encoder loss:           0.0000650
+        reconstruction_loss:    0.001141
+
+-----------------------------------------------------------------------------------------------
+
+From here on new implementation
+
+Varying Size of the embedding vector and number of codebooks
+
+Res_VQ_512_1_1_1
+    Test metric:
+        loss:                   0.511
+        encoder loss:           0.364
+        reconstruction_loss:    0.147
+
+Res_VQ_512_2_1_1
+    Test metric:
+        loss:                   0.735
+        encoder loss:           0.610
+        reconstruction_loss:    0.124
+
+Res_VQ_512_5_1_1
+    Test metric:
+        loss:                   0.840
+        encoder loss:           0.741
+        reconstruction_loss:    0.098
+
+Res_VQ_512_10_1_1
+    Test metric:
+        loss:                   0.696
+        encoder loss:           0.626
+        reconstruction_loss:    0.0708
+
+Res_VQ_512_10_11_11
+    Test metric:
+        loss:                   0.000407
+        encoder loss:           0.00115
+        reconstruction_loss:    0.00114
+
+
+-------------------------------------------------------------------------------------------
+
+Made it possible to split Codebook but resuse same codebook over several instances / splits
+
+DCB = Different Codebook, SCB = Same Codebook
+
+Res_VQ_512_1_11_11_DCB
+    Test metric:
+        loss:                   0.035
+        encoder loss:           0.0254
+        reconstruction_loss:    0.0092
+
+Res_VQ_512_1_11_11_SCB
+    Test metric:
+        loss:                   0.035
+        encoder loss:           0.0254
+        reconstruction_loss:    0.0092
+
+Res_VQ_512_2_11_11_DCB
+    Test metric:
+        loss:                   0.0147
+        encoder loss:           0.0105
+        reconstruction_loss:    0.00418
+
+Res_VQ_512_2_11_11_SCB
+    Test metric:
+        loss:                   0.0147
+        encoder loss:           0.0099
+        reconstruction_loss:    0.00417
+
+Res_VQ_512_5_11_11_DCB
+    Test metric:
+        loss:                   0.00222
+        encoder loss:           0.00092
+        reconstruction_loss:    0.00130
+
+Res_VQ_512_5_11_11_SCB
+    Test metric:
+        loss:                   0.00235
+        encoder loss:           0.00101
+        reconstruction_loss:    0.00135
+
+Res_VQ_512_10_11_11_DCB
+    Test metric:
+        loss:                   0.00108
+        encoder loss:           0.0000114
+        reconstruction_loss:    0.001072
+
+Res_VQ_512_10_11_11_SCB
+    Test metric:
+        loss:                   0.00112
+        encoder loss:           0.0000164
+        reconstruction_loss:    0.00110

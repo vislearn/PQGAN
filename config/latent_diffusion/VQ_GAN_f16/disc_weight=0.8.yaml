@@ -1,0 +1,144 @@
+seed_everything: 42
+verbose_mode: true
+
+trainer:
+  logger:
+    - class_path: "lightning.pytorch.loggers.TensorBoardLogger"
+      init_args:
+        save_dir: "./models"
+        name: "VQ_GAN_f16_256_1024_1_disc_weight=0.8"
+        log_graph: true
+  accelerator: auto
+  strategy: "ddp_find_unused_parameters_true"
+  devices: auto
+  num_nodes: 1
+  precision: "16-mixed"
+  callbacks: null
+  fast_dev_run: false # Set to i to run i train,val and test batch
+  max_epochs: null
+  min_epochs: null
+  max_steps: 10000000
+  min_steps: null
+  max_time: null
+  limit_train_batches: null
+  limit_val_batches: null
+  limit_test_batches: null
+  limit_predict_batches: null
+  overfit_batches: 0.0
+  val_check_interval: 10000
+  check_val_every_n_epoch: null
+  num_sanity_val_steps: null
+  log_every_n_steps: null
+  enable_checkpointing: True
+  enable_progress_bar: True
+  enable_model_summary: False
+  accumulate_grad_batches: 1
+  gradient_clip_val: null
+  gradient_clip_algorithm: "norm"
+  deterministic: null
+  benchmark: null
+  inference_mode: true
+  use_distributed_sampler: true
+  profiler: null
+  detect_anomaly: false
+  barebones: false
+  plugins: null
+  sync_batchnorm: false
+  reload_dataloaders_every_n_epochs: 0
+  default_root_dir: null
+
+model:
+  class_path: "vv.models.Autoencoder"
+  init_args:
+  class_path: "vv.models.latent_diffusion_copy.VQModel"
+  init_args:
+    learning_rate: 4.5e-06
+    embed_dim: 256
+    n_embed: 1024
+    num_spaces: 1
+    split_quantizer: False
+    monitor: val/rec_loss
+    ddconfig:
+      double_z: false
+      z_channels: 256
+      resolution: 256
+      in_channels: 3
+      out_ch: 3
+      ch: 128
+      ch_mult:
+      - 1
+      - 1
+      - 2
+      - 2
+      - 4
+      num_res_blocks: 2
+      attn_resolutions:
+      - 16
+      dropout: 0.0
+    lossconfig:
+      target: "vv.models.latent_diffusion_copy.loss.VQLPIPSWithDiscriminator"
+      params:
+        disc_conditional: false
+        disc_in_channels: 3
+        disc_num_layers: 3
+        disc_start: 1
+        disc_weight: 0.8
+        codebook_weight: 1.0
+
+data:
+  class_path: "vv.data.ImageNetLoader"
+  init_args:
+    resolution: 256
+    train_instances: 1281167
+    val_instances: 50000
+    test_instances: 100000
+    batch_size: 40
+    workers: 10
+    verbose: False
+    data_dir: "/path/to/imageNet"
+
+early_stopping:
+  monitor: "val/total_loss"
+  min_delta: 0.00
+  patience: 40
+  verbose: False
+  mode: "min"
+  strict: True
+  check_finite: True
+
+lr_monitor:
+  logging_interval: "step"
+
+checkpoint:
+  filename: "{epoch}-{step}-{val/total_loss:.4f}"
+  every_n_train_steps: 100000
+  save_weights_only: False
+
+image_logger:
+  num_images: 5
+  tag_name: "images_in_vs_out"
+
+metrics_logger:
+  log_every_n_val_epoch: 5
+  fid_config:
+    active: True
+    feature_layer_size: 2048
+  kid_config:
+    active: True
+    feature_layer_size: 2048
+  is_config:
+    active: True
+    feature_layer_size: 2048
+    splits: 10
+  lpips_config:
+    active: True
+    net_type: "alex"
+    reduction: "mean"
+  psnr_config:
+    active: True
+    data_range: [0.0, 1.0]
+    base: 10
+    reduction: "elementwise_mean"
+    dim: null
+  cmmd_config:
+    active: True

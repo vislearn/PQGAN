@@ -1,0 +1,11 @@
+data:
+  class_path: "vv.data.ImageNetLoader"
+  init_args:
+    resolution: 256
+    train_instances: 1281167
+    val_instances: 5000
+    test_instances: 100000
+    batch_size: 15
+    workers: 20
+    verbose: False
+    data_dir: "/path/to/imageNet"

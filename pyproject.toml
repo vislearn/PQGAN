@@ -1,0 +1,77 @@
+[project]
+name = "PQGAN"
+description = "Product-Quantised Image Representation for High-Resolution Image Synthesis"
+authors = [
+    {name = "Nikita Tatsch"}
+    ]
+readme = "README.md"
+requires-python = ">=3.11"
+dynamic = ["dependencies"]
+version = "1.0.0"
+urls = { Github = "https://github.com/MrWhatZitToYaa/VQ-VAE-Praktikum-SS24-HD"}
+
+[project.scripts]
+vv = "vv.__main__:main"
+
+
+[tool.setuptools.dynamic]
+dependencies = {file = ["requirements.txt"]}
+
+
+[project.optional-dependencies]
+dev = [
+    "pre-commit",
+    "pytest",
+    "pytest-cov",
+    "mypy",
+    "flake8",
+    "ipykernel"
+]
+
+[tool.setuptools]
+include-package-data = true
+
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+
+[build-system]
+requires = [
+    "setuptools>=68",
+    "wheel",
+    "platformdirs==3.10.0",
+]
+build-backend = "setuptools.build_meta"
+
+
+[tool.flake8]
+ignore = ["E501", "W503", "W504"]
+exclude = [
+    ".git",
+	"__pycache__",
+	"build",
+	"venv",
+	".venv",
+	"env",
+	".env",
+	"images",
+    "*/latent_diffusion_copy/*",
+    "*/vqgan_lc_copy/*",
+    "*/sd21_copy/*",
+    "*/sgm_copy/*",
+    "*/rq_vae_copy/*",
+]
+
+
+[tool.mypy]
+no_implicit_optional = false
+disallow_untyped_defs = true
+disallow_incomplete_defs = true
+explicit_package_bases = true
+exclude = "(\\.venv/|.*latent_diffusion_copy.*|.*vqgan_lc_copy.*|.*sd21_copy.*|.*sgm_copy.*|.*rq_vae_copy.*)"
+ignore_missing_imports = true
+
+[tool.isort]
+multi_line_output = 2
+line_length = 500
