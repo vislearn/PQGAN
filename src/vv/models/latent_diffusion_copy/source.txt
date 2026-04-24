@@ -1,0 +1,2 @@
+https://github.com/CompVis/taming-transformers/tree/master
+https://github.com/CompVis/latent-diffusion/tree/main

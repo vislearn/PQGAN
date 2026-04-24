@@ -1,0 +1,2 @@
+from vv.models.sd21_copy.ldm.modules.image_degradation.bsrgan import degradation_bsrgan_variant as degradation_fn_bsr
+from vv.models.sd21_copy.ldm.modules.image_degradation.bsrgan_light import degradation_bsrgan_variant as degradation_fn_bsr_light
