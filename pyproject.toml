@@ -1,14 +1,16 @@
 [project]
 name = "PQGAN"
-description = "Product-Quantised Image Representation for High-Resolution Image Synthesis"
+description = "Product-Quantised Image Representation for High-Quality Image Synthesis"
 authors = [
-    {name = "Nikita Tatsch"}
+    {name = "Denis Zavadski"},
+    {name = "Nikita Philip Tatsch"},
+    {name = "Carsten Rother"}
     ]
 readme = "README.md"
 requires-python = ">=3.11"
 dynamic = ["dependencies"]
 version = "1.0.0"
-urls = { Github = "https://github.com/MrWhatZitToYaa/VQ-VAE-Praktikum-SS24-HD"}
+urls = { Github = "https://github.com/vislearn/PQGAN"}
 
 [project.scripts]
 vv = "vv.__main__:main"

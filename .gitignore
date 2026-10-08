@@ -1,0 +1,28 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+/build/
+/dist/
+
+# Environments
+/.venv/
+/venv/
+/env/
+/pqgan/
+
+# Notebooks
+.ipynb_checkpoints/
+
+# Tests
+.pytest_cache/
+.mypy_cache/
+.coverage
+htmlcov/
+
+# Training and evaluation outputs
+/models/
+/lightning_logs/
+
+# LPIPS weights downloaded at runtime
+/taming/
