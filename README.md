@@ -1,10 +1,12 @@
-<h1 align="center">PQGAN: Product-Quantised Image Representation<br>for High-Resolution Image Synthesis</h1>
+<h1 align="center">PQGAN: Product-Quantised Image Representation<br>for High-Quality Image Synthesis</h1>
 
 <h3 align="center">Denis Zavadski &nbsp;·&nbsp; Nikita Philip Tatsch &nbsp;·&nbsp; Carsten Rother</h3>
 
 <div align="center">
 
 [![ICLR 2026](https://img.shields.io/badge/ICLR_2026-Paper-blue)](https://openreview.net/forum?id=D8oqcochgq)
+[![arXiv](https://img.shields.io/badge/arXiv-2510.03191-b31b1b)](https://arxiv.org/abs/2510.03191)
+[![Hugging Face](https://img.shields.io/badge/%F0%9F%A4%97%20Hugging%20Face-Weights-yellow)](https://huggingface.co/CVL-Heidelberg/PQGAN)
 [![pytest](https://github.com/MrWhatZitToYaa/VQ-VAE-Praktikum-SS24-HD/actions/workflows/pytest.yml/badge.svg)](https://github.com/MrWhatZitToYaa/VQ-VAE-Praktikum-SS24-HD/actions/workflows/pytest.yml)
 [![quality checks](https://github.com/MrWhatZitToYaa/VQ-VAE-Praktikum-SS24-HD/actions/workflows/pre-commit.yml/badge.svg)](https://github.com/MrWhatZitToYaa/VQ-VAE-Praktikum-SS24-HD/actions/workflows/pre-commit.yml)
 
@@ -34,23 +36,30 @@ This factorisation generalises both standard VQ (*S*=1) and scalar quantisation 
 
 All models are trained on ImageNet (256×256) and evaluated on the ImageNet validation set.
 
-### Reconstruction quality (F=8 downsampling factor)
+### Reconstruction quality
 
-| Model | Codebook | PSNR ↑ | FID ↓ | LPIPS ↓ | CMMD ↓ |
-|-------|----------|--------|-------|---------|--------|
-| VQGAN | *K*=16384, *S*=1 | 27.0 | 0.93 | 0.18 | — |
-| RQ-VAE | *K*=512 ×4 | 28.1 | 0.69 | 0.16 | — |
-| **PQGAN (ours)** | *K*=512, *S*=64 | **37.4** | **0.036** | **0.038** | **–96%** |
+Selected rows from Table 1 of the paper (ImageNet 256×256 validation set, 50k images). *F*: downsampling factor, *d*: latent channels, *K*: codebook size (per subspace for PQ).
+
+| Model | Latent | *F* | Latent resolution | *d* | *K* | PSNR ↑ | rFID ↓ | CMMD ↓ | LPIPS ↓ |
+|-------|--------|-----|-------------------|-----|-----|--------|--------|--------|---------|
+| VQGAN (LDM) | VQ | 8 | 32×32 | 4 | 16 384 | 23.1 | 1.29 | 0.258 | 0.0815 |
+| VQGAN-LC | VQ | 8 | 32×32 | 4 | 100 000 | 27.0 | 1.29 | 0.080 | 0.0712 |
+| SDv2.1 VAE | KL | 8 | 32×32 | 4 | – | 25.3 | 0.75 | 0.133 | 0.0610 |
+| SDXL VAE | KL | 8 | 32×32 | 4 | – | 25.3 | 0.74 | 0.148 | 0.0573 |
+| **PQGAN (ours)** | PQ | 16 | 16×16 | 128 | 128 | 28.3 | 0.41 | 0.094 | 0.0304 |
+| **PQGAN (ours)** | PQ | 8 | 32×32 | 128 | 512 | **37.4** | **0.036** | **0.011** | **0.0024** |
+
+Both PQGAN models use *S*=64 subspaces and are available as [pretrained weights](#pretrained-models).
 
 ### Diffusion model integration (Stable Diffusion 2.1)
 
-By swapping the SD2.1 VAE with a PQGAN encoder, we obtain three operating points:
+By adapting SD2.1 to PQGAN latents, we obtain three operating points:
 
 | Variant | Description |
 |---------|-------------|
-| **PQSD-HR** | Double output resolution (512→1024) at no additional compute |
-| **PQSD-Precise** | Same resolution, improved fidelity |
-| **PQSD-Quick** | Same resolution, 2× faster sampling |
+| **PQSD-HR** | Double output resolution (768→1536) at the same sampling cost |
+| **PQSD-Precise** | Same resolution and cost, higher-fidelity latent space |
+| **PQSD-Quick** | Same resolution, ~4× faster sampling |
 
 ---
 
@@ -86,6 +95,51 @@ pre-commit install
 
 ---
 
+## Pretrained Models
+
+Weights for the two PQGAN models from Table 1 are available on Hugging Face at [CVL-Heidelberg/PQGAN](https://huggingface.co/CVL-Heidelberg/PQGAN). Both were trained on ImageNet at 256×256.
+
+| Model | *F* | *d* | *K* | *S* | Latent (256×256 input) | PSNR ↑ | rFID ↓ | CMMD ↓ | LPIPS ↓ |
+|-------|-----|-----|-----|-----|------------------------|--------|--------|--------|---------|
+| `PQGAN_F8_K512_Z128_S64` | 8 | 128 | 512 | 64 | 128×32×32 | 37.4 | 0.036 | 0.011 | 0.0024 |
+| `PQGAN_F16_K128_Z128_S64` | 16 | 128 | 128 | 64 | 128×16×16 | 28.3 | 0.41 | 0.094 | 0.0304 |
+
+Each model comes as `checkpoints/<name>.safetensors` (weights) and `checkpoints/<name>.yaml` (model config). The weights contain only the autoencoder and quantiser. Discriminator and optimizer states are not included.
+
+```python
+import torch
+import yaml
+from huggingface_hub import hf_hub_download
+from PIL import Image
+from safetensors.torch import load_file
+from torchvision import transforms
+
+from vv.models.latent_diffusion_copy import VQModel
+
+name = "PQGAN_F8_K512_Z128_S64"  # or "PQGAN_F16_K128_Z128_S64"
+config = yaml.safe_load(open(hf_hub_download("CVL-Heidelberg/PQGAN", f"checkpoints/{name}.yaml")))
+model = VQModel(**config["model"]["init_args"])
+model.load_state_dict(load_file(hf_hub_download("CVL-Heidelberg/PQGAN", f"checkpoints/{name}.safetensors")))
+model = model.eval().cuda()
+
+# Models expect 256x256 inputs with ImageNet normalisation
+mean, std = torch.tensor([0.485, 0.456, 0.406]), torch.tensor([0.229, 0.224, 0.225])
+preprocess = transforms.Compose([transforms.Resize((256, 256)), transforms.ToTensor(), transforms.Normalize(mean, std)])
+x = preprocess(Image.open("image.jpg").convert("RGB")).unsqueeze(0).cuda()
+
+with torch.no_grad():
+    quant, _, (_, _, indices) = model.encode(x)  # quant: (1, 128, 32, 32) for F=8, (1, 128, 16, 16) for F=16
+    rec = model.decode(quant)
+
+rec = (rec.cpu() * std[:, None, None] + mean[:, None, None]).clamp(0, 1)  # back to [0, 1]
+```
+
+`indices` is a list with one tensor of codebook indices per subspace (64 entries).
+
+The metrics above were reproduced from these weights with `vv eval` on the full ImageNet validation set. The training configs are in [`config/latent_diffusion/F8_K512_Z128_S64`](config/latent_diffusion/F8_K512_Z128_S64/config.yaml) and [`config/latent_diffusion/F16_K128_Z128_S64`](config/latent_diffusion/F16_K128_Z128_S64/config.yaml).
+
+---
+
 ## Usage
 
 ### Training
@@ -93,8 +147,10 @@ pre-commit install
 Config files for all experiments are in `config/latent_diffusion/`. The main model from the paper (F=8, *d*=128, *S*=64, *K*=512):
 
 ```sh
-vv fit --config config/latent_diffusion/F16_K4_Z128_S64/config.yaml
+vv fit --config config/latent_diffusion/F8_K512_Z128_S64/config.yaml
 ```
+
+The F=16 model (*d*=128, *S*=64, *K*=128) uses `config/latent_diffusion/F16_K128_Z128_S64/config.yaml`.
 
 Set `data_dir` in the config to point to your ImageNet directory. Multi-GPU training and cluster scripts are in `scripts/`.
 
@@ -155,7 +211,7 @@ pytest tests --cov src
 
 ```bibtex
 @inproceedings{zavadski2026pqgan,
-  title     = {Product-Quantised Image Representation for High-Resolution Image Synthesis},
+  title     = {{PQGAN}: Product-Quantised Image Representation for High-Quality Image Synthesis},
   author    = {Zavadski, Denis and Tatsch, Nikita Philip and Rother, Carsten},
   booktitle = {The Fourteenth International Conference on Learning Representations},
   year      = {2026},
