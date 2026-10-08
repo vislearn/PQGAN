@@ -7,8 +7,6 @@
 [![ICLR 2026](https://img.shields.io/badge/ICLR_2026-Paper-blue)](https://openreview.net/forum?id=D8oqcochgq)
 [![arXiv](https://img.shields.io/badge/arXiv-2510.03191-b31b1b)](https://arxiv.org/abs/2510.03191)
 [![Hugging Face](https://img.shields.io/badge/%F0%9F%A4%97%20Hugging%20Face-Weights-yellow)](https://huggingface.co/CVL-Heidelberg/PQGAN)
-[![pytest](https://github.com/vislearn/PQGAN/actions/workflows/pytest.yml/badge.svg)](https://github.com/vislearn/PQGAN/actions/workflows/pytest.yml)
-[![quality checks](https://github.com/vislearn/PQGAN/actions/workflows/pre-commit.yml/badge.svg)](https://github.com/vislearn/PQGAN/actions/workflows/pre-commit.yml)
 
 </div>
 
