@@ -1,0 +1,29 @@
+on:
+  push:
+    branches: main
+    paths:
+      - "**.py"
+      - "requirements.txt"
+      - "pyproject.toml"
+      - ".pre-commit-config.yaml"
+      - ".github/workflows/pre-commit.yml"
+  pull_request:
+    paths:
+      - "**.py"
+      - "requirements.txt"
+      - "pyproject.toml"
+      - ".pre-commit-config.yaml"
+      - ".github/workflows/pre-commit.yml"
+  workflow_dispatch:
+
+name: Code quality
+
+jobs:
+  pre-commit:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+    - uses: actions/setup-python@v5
+      with:
+        python-version: "3.11"
+    - uses: pre-commit/action@v3.0.1

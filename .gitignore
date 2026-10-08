@@ -26,3 +26,6 @@ htmlcov/
 
 # LPIPS weights downloaded at runtime
 /taming/
+
+# Datasets downloaded by tests
+/data/
